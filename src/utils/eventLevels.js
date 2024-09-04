@@ -80,17 +80,17 @@ export function sortWeekEvents(events, accessors, localizer) {
 export function sortEvents(eventA, eventB, accessors) {
   // Mapeo de status a prioridad (orden específico)
   const statusPriority = {
-    5: 1, // Prioridad más alta
-    7: 2,
-    2: 3,
-    3: 4,
-    4: 5,
-    19: 6, // Prioridad más baja
+    Confirmado: 1, // Prioridad más alta
+    '1 Hold': 2,
+    '2 Hold': 3,
+    '3 Hold': 4,
+    '4 Hold': 5,
+    Tentativo: 6, // Prioridad más baja
   }
 
   // Obtener la prioridad del status, default a la prioridad más baja si no se encuentra
-  const priorityA = statusPriority[eventA.status] || 7
-  const priorityB = statusPriority[eventB.status] || 7
+  const priorityA = statusPriority[eventA?.status_long_name] || 7
+  const priorityB = statusPriority[eventB?.status_long_name] || 7
 
   // Ordenar primero por prioridad de status
   if (priorityA !== priorityB) {

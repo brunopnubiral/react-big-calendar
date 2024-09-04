@@ -46862,7 +46862,6 @@
   // properly calculating segments requires working with dates in
   // the timezone we're working                   with, so we use the localizer
   function eventSegments(event, range, accessors, localizer) {
-    console.log('testeo', event, range, accessors, localizer)
     var _endOfRange = endOfRange({
         dateRange: range,
         localizer: localizer,
@@ -46900,7 +46899,6 @@
       seg,
       levels = [],
       extra = []
-    console.log(rowSegments, 'ROW! SEGMENTs!')
     for (i = 0; i < rowSegments.length; i++) {
       seg = rowSegments[i]
       for (j = 0; j < levels.length; j++)
@@ -46945,21 +46943,27 @@
       return sortEvents(a, b, accessors)
     })
   }
-  function sortEvents(eventA, eventB, accessors, localizer) {
+  function sortEvents(eventA, eventB, accessors) {
     // Mapeo de status a prioridad (orden específico)
     var statusPriority = {
-      5: 1,
+      Confirmado: 1,
       // Prioridad más alta
-      7: 2,
-      2: 3,
-      3: 4,
-      4: 5,
-      19: 6, // Prioridad más baja
+      '1 Hold': 2,
+      '2 Hold': 3,
+      '3 Hold': 4,
+      '4 Hold': 5,
+      Tentativo: 6, // Prioridad más baja
     }
 
     // Obtener la prioridad del status, default a la prioridad más baja si no se encuentra
-    var priorityA = statusPriority[eventA.status] || 7
-    var priorityB = statusPriority[eventB.status] || 7
+    var priorityA =
+      statusPriority[
+        eventA === null || eventA === void 0 ? void 0 : eventA.status_long_name
+      ] || 7
+    var priorityB =
+      statusPriority[
+        eventB === null || eventB === void 0 ? void 0 : eventB.status_long_name
+      ] || 7
 
     // Ordenar primero por prioridad de status
     if (priorityA !== priorityB) {
