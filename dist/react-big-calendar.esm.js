@@ -1867,10 +1867,15 @@ function eventLevels(rowSegments) {
       ;(levels[j] || (levels[j] = [])).push(seg)
     }
   }
-  // Removing the sorting of levels to maintain original order
-  // for (i = 0; i < levels.length; i++) {
-  //   levels[i].sort((a, b) => a.left - b.left)
-  // }
+  // Calculamos left y right sin ordenar, manteniendo el orden original
+  levels.forEach(function (level) {
+    var runningLeft = 0
+    level.forEach(function (seg) {
+      seg.left = runningLeft
+      seg.right = runningLeft + seg.span
+      runningLeft = seg.right
+    })
+  })
   return {
     levels: levels,
     extra: extra,
@@ -1896,11 +1901,11 @@ function segsOverlap(seg, otherSegs) {
   })
 }
 function sortWeekEvents(events, accessors, localizer) {
-  // Simply return the events in their original order
+  // Simplemente devolver los eventos en su orden original
   return events
 }
 function sortEvents(eventA, eventB, accessors, localizer) {
-  // Return 0 to maintain the original order of events
+  // Devolver 0 para mantener el orden original de los eventos
   return 0
 }
 
