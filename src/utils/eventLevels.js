@@ -67,34 +67,11 @@ export function segsOverlap(seg, otherSegs) {
 }
 
 export function sortWeekEvents(events, accessors, localizer) {
-  const base = [...events];
-  const multiDayEvents = [];
-  const standardEvents = [];
-  base.forEach((event) => {
-    const startCheck = accessors.start(event);
-    const endCheck = accessors.end(event);
-    if (localizer.daySpan(startCheck, endCheck) > 1) {
-      multiDayEvents.push(event);
-    } else {
-      standardEvents.push(event);
-    }
-  });
-  // Mantener el orden original de los eventos de varios días
-  const multiSorted = multiDayEvents.sort((a, b) => {
-    const indexA = events.indexOf(a);
-    const indexB = events.indexOf(b);
-    return indexA - indexB;
-  });
-  // Mantener el orden original de los eventos estándar
-  const standardSorted = standardEvents.sort((a, b) => {
-    const indexA = events.indexOf(a);
-    const indexB = events.indexOf(b);
-    return indexA - indexB;
-  });
-  return [...multiSorted, ...standardSorted];
+  // Simplemente devolver los eventos en su orden original
+  return events
 }
 
 export function sortEvents(eventA, eventB, accessors, localizer) {
-  // Return 0 to maintain the original order of events
+  // Devolver 0 para mantener el orden original de los eventos
   return 0
 }
