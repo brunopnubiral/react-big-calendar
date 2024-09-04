@@ -28,24 +28,26 @@ export function eventSegments(event, range, accessors, localizer) {
 }
 
 export function eventLevels(rowSegments, limit = Infinity) {
-  let i,
-    j,
-    seg,
-    levels = [],
-    extra = []
+  let i, j, seg, levels = [], extra = []
   for (i = 0; i < rowSegments.length; i++) {
     seg = rowSegments[i]
-    for (j = 0; j < levels.length; j++) if (!segsOverlap(seg, levels[j])) break
+    for (j = 0; j < levels.length; j++)
+      if (!segsOverlap(seg, levels[j])) break
     if (j >= limit) {
       extra.push(seg)
     } else {
-      ;(levels[j] || (levels[j] = [])).push(seg)
+      (levels[j] || (levels[j] = [])).push(seg)
     }
   }
-  // Removing the sorting of levels to maintain original order
-  // for (i = 0; i < levels.length; i++) {
-  //   levels[i].sort((a, b) => a.left - b.left)
-  // }
+  // Calculamos left y right sin ordenar, manteniendo el orden original
+  levels.forEach(level => {
+    let runningLeft = 0
+    level.forEach(seg => {
+      seg.left = runningLeft
+      seg.right = runningLeft + seg.span
+      runningLeft = seg.right
+    })
+  })
   return { levels, extra }
 }
 
@@ -65,8 +67,31 @@ export function segsOverlap(seg, otherSegs) {
 }
 
 export function sortWeekEvents(events, accessors, localizer) {
-  // Simply return the events in their original order
-  return events
+  const base = [...events];
+  const multiDayEvents = [];
+  const standardEvents = [];
+  base.forEach((event) => {
+    const startCheck = accessors.start(event);
+    const endCheck = accessors.end(event);
+    if (localizer.daySpan(startCheck, endCheck) > 1) {
+      multiDayEvents.push(event);
+    } else {
+      standardEvents.push(event);
+    }
+  });
+  // Mantener el orden original de los eventos de varios días
+  const multiSorted = multiDayEvents.sort((a, b) => {
+    const indexA = events.indexOf(a);
+    const indexB = events.indexOf(b);
+    return indexA - indexB;
+  });
+  // Mantener el orden original de los eventos estándar
+  const standardSorted = standardEvents.sort((a, b) => {
+    const indexA = events.indexOf(a);
+    const indexB = events.indexOf(b);
+    return indexA - indexB;
+  });
+  return [...multiSorted, ...standardSorted];
 }
 
 export function sortEvents(eventA, eventB, accessors, localizer) {
